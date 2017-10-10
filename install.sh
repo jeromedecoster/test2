@@ -29,17 +29,28 @@ check_sudo() {
 }
 
 
-if [[ `git rev-parse --is-inside-work-tree 2>/dev/null` == 'true' ]]; then
+if [[ `pwd` == $lib ]]; then
+    echo $lib install
+elif [[ `git rev-parse --is-inside-work-tree 2>/dev/null` == 'true' ]]; then
     echo offline install
-elif [[ `pwd` == '/tmp/dots' ]]; then
-    echo /tmp/dots install
-else
-    echo online install
-    mkdir -p /tmp/dots
-    cd /tmp/dots
-    curl -sSL https://github.com/jeromedecoster/test2/archive/master.tar.gz | tar zx --strip 1
-    #bash ./install.sh
     # sudo needed
     check_sudo
-    sudo cp -R $tmp $lib
+    sudo rm --force --recursive $lib
+    sudo mkdir --parents $lib
+    sudo cp --recursive `ls -A1 | grep -v .git` $lib
+    sudo chown --recursive `whoami` $lib
+    cd $lib
+    bash ./install.sh
+else
+    echo online install
+    mkdir --parents /tmp/dots
+    cd /tmp/dots
+    curl -sSL https://github.com/jeromedecoster/test2/archive/master.tar.gz | tar zx --strip 1
+    # sudo needed
+    check_sudo
+    sudo rm --force --recursive $lib
+    sudo cp --recursive $tmp $lib
+    sudo chown --recursive `whoami` $lib
+    cd $lib
+    bash ./install.sh
 fi
