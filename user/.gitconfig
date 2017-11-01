@@ -1,0 +1,13 @@
+[color]
+  ui = auto
+[color "status"]
+  added     = 82   # green
+  branch    = 201  # magenta
+  changed   = 196  # red
+  deleted   = 87   # cyan
+  untracked = 226  # yellow
+[core]
+  excludesfile = ~/.gitignore
+[user]
+  name = jeromedecoster
+  email = jeromedecoster@users.noreply.github.com

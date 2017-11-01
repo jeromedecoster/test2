@@ -1,4 +1,3 @@
-tmp=/tmp/dots
 lib=/usr/local/lib/dots2
 
 info() {
@@ -28,40 +27,29 @@ check_sudo() {
   [[ -z `sudo -n uptime 2>/dev/null` ]] && abort 'sudo required'
 }
 
+# todo : abort if no dir
+
+if [[ ! -d $lib ]]; then
+    echo ABORT
+fi
+
 
 if [[ `pwd` == $lib ]]; then
-    echo install
+    echo remove
     # sudo needed
     check_sudo
-    #echo $lib install
-    #source $lib/util.sh
-    #cd $lib/tasks
     while read file; do
         #echo $lib/tasks/$file
-        bash $lib/tasks/$file
+        bash $lib/tasks/$file ji --remove ko
     # only catch the files who starts with a number (for easy deactivation) and finish with .sh
     done < <(ls -1 $lib/tasks | grep ^[0-9].*sh$)
-    # | grep ^[0-9] | grep '\.sh$')
 elif [[ `git rev-parse --is-inside-work-tree 2>/dev/null` == 'true' ]]; then
-    echo offline install
-    # sudo needed
+    echo remove from git
     check_sudo
     sudo rm --force --recursive $lib
     sudo mkdir --parents $lib
     sudo cp --recursive `ls -A1 | grep -v .git` $lib
     sudo chown --recursive `whoami` $lib
     cd $lib
-    bash ./install.sh
-else
-    echo online install
-    mkdir --parents /tmp/dots
-    cd /tmp/dots
-    curl -sSL https://github.com/jeromedecoster/test2/archive/master.tar.gz | tar zx --strip 1
-    # sudo needed
-    check_sudo
-    sudo rm --force --recursive $lib
-    sudo cp --recursive $tmp $lib
-    sudo chown --recursive `whoami` $lib
-    cd $lib
-    bash ./install.sh
+    bash ./remove.sh
 fi
